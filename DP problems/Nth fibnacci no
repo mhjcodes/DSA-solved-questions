@@ -1,0 +1,63 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+int findfib(int n, vector<int> &dp) {
+    // base cases
+    if (n == 1 || n == 2)
+        return 1;
+
+    // overlapping call check
+    if (dp[n - 1] != -1)
+        return dp[n - 1];
+
+    // storing values (memorization)
+    dp[n - 1] = findfib(n - 1, dp) + findfib(n - 2, dp);
+    return dp[n - 1];
+}
+
+/*int main() {
+    // in this question demands start from n=1, non-zero based counting
+    int n;
+    cin >> n;
+    vector<int> dp(n, -1); // Initialize dp with size n and all elements as -1
+    cout << findfib(n, dp) << endl;
+    return 0;
+}*/
+
+
+// tabulation code 
+/*int main(){
+    int n;
+    cin>> n;
+    vector<int> dp(n); // declaration of space (size)
+    dp[0]= 1;
+    dp[1] = 1;
+
+    for(int i= 2; i<n ; i++)
+       dp[i] = dp[i-1] + dp[i-2];
+    
+    cout<< dp[n-1] << endl;
+    return 0;
+}*/
+
+// space optimisation (instead of using table, finding final value using relation b/w varieables )
+int main(){
+    int n;
+    cin>> n;
+    
+    int prev2 = 1;
+    int prev1 = 1;
+
+     if(n == 0)
+     return prev2 ;
+
+    for(int i=2; i<n; i++){
+        int curr = prev1 + prev2;
+        // shift logic
+        prev2 = prev1;
+        prev1 = curr;
+    }
+    cout<< prev1 << endl;
+    return 0;
+    
+}
