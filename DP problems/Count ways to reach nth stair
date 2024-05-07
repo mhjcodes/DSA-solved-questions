@@ -1,0 +1,24 @@
+#include <bits/stdc++.h> 
+#define MOD 1000000007;  // 10^9 + 7, to make sure value doesnt overflow
+int solve(int nStairs,  vector<int> &dp){
+    // backward recursive memo approach
+    // base case
+    if(nStairs == 0)
+    return 1;
+    if(nStairs < 0)
+    return 0;
+    
+    // check to avoid unwanted recursive calls
+    if(dp[nStairs] != -1)
+    return dp[nStairs];
+
+    dp[nStairs] = (solve(nStairs-1, dp) + solve(nStairs-2,  dp)) % MOD;
+    return dp[nStairs];
+}
+int countDistinctWays(int nStairs) {
+
+    vector<int> dp(nStairs+1, -1);
+    int ans = solve(nStairs, dp);
+    return ans;
+
+}
