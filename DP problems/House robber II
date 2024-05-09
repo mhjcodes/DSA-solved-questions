@@ -1,0 +1,88 @@
+class Solution {
+public:
+int solveTab(vector<int> &nums, int start, int end, vector<int> &dp) {
+        dp[start] = nums[start];
+        
+        if(start != end)
+        dp[start+1] = max(nums[start], nums[start+1]);
+
+        for(int i = start+2; i <= end; i++) { 
+            int incl = dp[i - 2] + nums[i];
+            int excl = dp[i - 1] + 0;
+
+            dp[i] = max(incl, excl);
+        }
+        return dp[end];
+    }
+    int spaceOpt(vector<int> &nums, int start, int end){
+        int prev2 = nums[start];
+        
+        if(start == end)
+        return prev2;
+        
+        int prev1;
+
+        if(start != end)
+        prev1 = max(nums[start], nums[start+1]);
+
+        for(int i= start+2 ; i<=end; i++){
+            int incl = prev2 + nums[i];
+            int excl = prev1 + 0;
+
+            int curr = max(excl, incl);
+            // shift logic
+            prev2 = prev1;
+            prev1 = curr;
+        }
+        return prev1;
+    }
+
+    int solveMem(vector<int> &nums, int start, int end, vector<int> &dp){
+        // base case
+        if(start > end)
+            return 0;
+
+        if(start == end)
+            return nums[start];
+
+        if(dp[end] != -1)
+            return dp[end];
+
+        // Recursive calls
+        int incl = solveMem(nums, start, end - 2, dp) + nums[end];
+        int excl = solveMem(nums, start, end - 1, dp) + 0;
+
+        // Memoization
+        dp[end] = max(incl, excl);
+        return dp[end];
+    }
+
+    int rob(vector<int>& nums) {
+        int n = nums.size();
+        if(n == 0)
+            return 0;
+        if(n == 1)
+            return nums[0];
+
+        // first house included, last house excluded
+        //vector<int> dp1(n, -1);
+        //int ans1 = solveMem(nums, 0, n - 2, dp1);
+        //int ans1 = solveTab(nums,0, n-2, dp1);
+
+        // first house excluded, last house included
+        //vector<int> dp2(n, -1);
+        //int ans2 = solveMem(nums, 1, n - 1, dp2);
+        //int ans2 = solveTab(nums,1, n-1, dp2);
+
+        int ans1 = spaceOpt(nums, 0, n-2);
+        int ans2 = spaceOpt(nums, 1, n-1);
+
+
+
+        return max(ans1, ans2);
+
+
+
+
+    }
+};
