@@ -20,7 +20,7 @@ int solve(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &
     return dp[i][capacity];
 }
 int solveTab(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &value, vector<vector<int>> &dp){
-    // Fill the first row of dp table
+    // for 0th row
     for(int w = 0; w <= capacity; w++){
         if(w >= weight[0])
             dp[0][w] = value[0];
@@ -28,24 +28,50 @@ int solveTab(int capacity, int maxWeight, int n, vector<int> &weight, vector<int
             dp[0][w] = 0;
     }
 
-    // Fill the remaining rows of dp table
+    // for 1 to n-1 row && from 0 to capacity columns
     for(int i = 1; i < n; i++){
         for(int w = 0; w <= capacity; w++){
             int incl = INT_MIN;
             if(w >= weight[i])
                 incl = value[i] + dp[i - 1][w - weight[i]];
-            int excl = dp[i - 1][w];
+            int excl = 0 + dp[i - 1][w];
             dp[i][w] = max(incl, excl);
         }
     }
     return dp[n - 1][capacity];
+}
+int spaceOpt(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &value){
+    // for each row, it depends on prev row, i.e: dp[i][w] :: dp[i-1] (both incl and excl)
+    vector<int> prev(capacity+1, -1);
+    vector<int> curr(capacity+1, -1);
+
+    // for base case
+    for(int w = 0; w <= capacity; w++){
+        if(w >= weight[0])
+            prev[w] = value[0];
+        else
+            prev[w] = 0;
+    }
+    
+    for(int i = 1; i < n; i++){
+        for(int w = 0; w <= capacity; w++){
+            int incl = INT_MIN;
+            if(w >= weight[i])
+                incl = value[i] + prev[w - weight[i]];
+            int excl = 0 + prev[w];
+            curr[w] = max(incl, excl);
+        }
+        prev = curr;   // array copy
+    }
+    return prev[capacity];
 }
 int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
 {
 	vector<vector<int>> dp(n,(vector<int>((maxWeight+1),-1)));
     int capacity = maxWeight;
     // int ans = solve(capacity, maxWeight, n, weight, value, n-1, dp);
-    int ans = solveTab(capacity, maxWeight, n, weight, value, dp);
+    // int ans = solveTab(capacity, maxWeight, n, weight, value, dp);
+    int ans = spaceOpt(capacity, maxWeight, n, weight, value);
     return ans;
 
     
