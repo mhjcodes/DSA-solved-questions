@@ -65,13 +65,37 @@ int spaceOpt(int capacity, int maxWeight, int n, vector<int> &weight, vector<int
     }
     return prev[capacity];
 }
+int spaceOptAdv(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &value){
+    vector<int> curr(capacity+1, -1);
+
+    // for base case
+    for(int w = 0; w <= capacity; w++){
+        if(w >= weight[0])
+            curr[w] = value[0];
+        else
+            curr[w] = 0;
+    }
+    
+    // reversing the traversal
+    for(int i = 1; i < n; i++){
+        for(int w = capacity; w >= 0; w--){
+            int incl = INT_MIN;
+            if(w >= weight[i])
+                incl = value[i] + curr[w - weight[i]];
+            int excl = 0 + curr[w];
+            curr[w] = max(incl, excl);
+        }
+    }
+    return curr[capacity];
+}
 int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
 {
 	vector<vector<int>> dp(n,(vector<int>((maxWeight+1),-1)));
     int capacity = maxWeight;
     // int ans = solve(capacity, maxWeight, n, weight, value, n-1, dp);
     // int ans = solveTab(capacity, maxWeight, n, weight, value, dp);
-    int ans = spaceOpt(capacity, maxWeight, n, weight, value);
+    // int ans = spaceOpt(capacity, maxWeight, n, weight, value);
+    int ans = spaceOptAdv(capacity, maxWeight, n, weight, value);
     return ans;
 
     
