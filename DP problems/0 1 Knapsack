@@ -1,0 +1,53 @@
+#include <bits/stdc++.h> 
+int solve(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &value, int i, vector<vector<int>> &dp){
+    // base case
+    if(i == 0){
+        if(capacity >= weight[0])
+        return value[0];
+        else
+        return 0;
+    }
+
+    if(dp[i][capacity] != -1)
+    return dp[i][capacity];
+
+
+    int incl = INT_MIN;
+    if(capacity >= weight[i])
+    incl = value[i]+ solve((capacity-weight[i]), maxWeight, n, weight, value, i-1,dp);
+    int excl = 0+ solve((capacity-0), maxWeight, n, weight, value, i-1,dp);
+    dp[i][capacity] = max(incl, excl);
+    return dp[i][capacity];
+}
+int solveTab(int capacity, int maxWeight, int n, vector<int> &weight, vector<int> &value, vector<vector<int>> &dp){
+    // Fill the first row of dp table
+    for(int w = 0; w <= capacity; w++){
+        if(w >= weight[0])
+            dp[0][w] = value[0];
+        else
+            dp[0][w] = 0;
+    }
+
+    // Fill the remaining rows of dp table
+    for(int i = 1; i < n; i++){
+        for(int w = 0; w <= capacity; w++){
+            int incl = INT_MIN;
+            if(w >= weight[i])
+                incl = value[i] + dp[i - 1][w - weight[i]];
+            int excl = dp[i - 1][w];
+            dp[i][w] = max(incl, excl);
+        }
+    }
+    return dp[n - 1][capacity];
+}
+int knapsack(vector<int> weight, vector<int> value, int n, int maxWeight) 
+{
+	vector<vector<int>> dp(n,(vector<int>((maxWeight+1),-1)));
+    int capacity = maxWeight;
+    // int ans = solve(capacity, maxWeight, n, weight, value, n-1, dp);
+    int ans = solveTab(capacity, maxWeight, n, weight, value, dp);
+    return ans;
+
+    
+}
+    
