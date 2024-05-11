@@ -1,58 +1,58 @@
-#include<bits/stdc++.h>
-int solve(int n, vector<int> &days, vector<int> &cost, vector<int> &dp, int i ){
+class Solution {
+public:
+int solve(int n, vector<int> &days, vector<int> &costs, vector<int> &dp, int i ){
     // forward recursive traversal
     // base case
     if( i > n-1 )
     return 0;
     if( i == n-1)    // last day. so, choose a pass with less cost 
-    return min(min(cost[0],cost[1]), cost[2]);                  // return cost[0]; (also correct)
+    return min(min(costs[0],costs[1]), costs[2]);                  // return cost[0]; (also correct)
 
     if(dp[i] != -1)
     return dp[i];
     
     // 1day pass
-    int ans1 = cost[0] + solve(n, days, cost, dp,i+1);
+    int ans1 = costs[0] + solve(n, days, costs, dp,i+1);
 
 
     int j;
     // 7day pass
     int x = days[i] + 7;
-    for(j = i ; days[j] < x; j++);
-    int ans2 = cost[1] + solve(n, days, cost, dp,j);
+    for(j = i ; n > j && days[j] < x; j++);
+    int ans2 = costs[1] + solve(n, days, costs, dp,j);
 
     //30day pass
     int y= days[i] + 30;
-    for(j = i; days[j] < y; j++);
-    int ans3 = cost[2] + solve(n, days, cost, dp,j);
+    for(j = i; n > j && days[j] < y; j++);
+    int ans3 = costs[2] + solve(n, days, costs, dp,j);
 
     dp[i] = min(min(ans1,ans2),ans3);
     return dp[i];
 }
-int solveTab(int n, vector<int> &days, vector<int> &cost, vector<int> &dp){
+int solveTab(int n, vector<int> &days, vector<int> &costs, vector<int> &dp){
     dp[n] = 0;
-    dp[n-1] = min(min(cost[0], cost[1]), cost[2]);
+    dp[n-1] = min(min(costs[0], costs[1]), costs[2]);
     for(int j = n-2; j>=0 ; j--){
         //1day pass
-        int ans1 = cost[0] + dp[j+1];
+        int ans1 = costs[0] + dp[j+1];
 
         int q;
         //7day pass
-        for(q = j; days[q] < days[j] + 7; q++);
-        int ans2 = cost[1] + dp[q];
+        for(q = j; n > q && days[q] < days[j] + 7; q++);
+        int ans2 = costs[1] + dp[q];
         //30day pass
-        for(q = j; days[q] < days[j] + 30; q++);
-        int ans3 = cost[2] + dp[q];
+        for(q = j; n > q && days[q] < days[j] + 30; q++);
+        int ans3 = costs[2] + dp[q];
 
         dp[j] = min(min(ans1, ans2), ans3);
     }
     return dp[0];
-}
-int minimumCoins(int n, vector<int> days, vector<int> cost)
-{
-    // Write your code here.
-    // vector<int> dp(n+1, -1);
-    // return solve(n, days, cost, dp, 0);
-
-   vector<int> dp(n+1, INT_MAX);
-   return solveTab(n, days, cost, dp);
-}
+} 
+    int mincostTickets(vector<int>& days, vector<int>& costs) {
+        int n = days.size();
+        // vector<int> dp(n+1, -1);
+        // return solve(n, days, costs, dp, 0);
+        vector<int> dp(n+1, INT_MAX);
+        return solveTab(n, days, costs, dp);
+    }
+};
