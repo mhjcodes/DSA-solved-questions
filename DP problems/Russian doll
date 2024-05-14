@@ -1,0 +1,40 @@
+class Solution {
+public:
+    bool check(vector<int> &prev, vector<int> &curr){
+        return (curr[0] < prev[0] && curr[1] < prev[1]);
+    }
+    int solve(int curr, vector<vector<int>> &env, int n, int prev, vector<vector<int>> &dp){
+        // base case
+        if(curr == n)
+        return 0;
+
+        if(dp[curr][prev+1] != -1)
+        return dp[curr][prev+1];
+
+        int incl;
+        // for including
+        if( prev == -1 || check(env[prev], env[curr])){
+            incl = 1 + solve(curr+1, env, n, curr, dp);
+        }
+        else
+        incl = solve(curr+1, env, n, prev, dp);
+
+        // for excluding
+        int excl = solve(curr+1, env, n, prev, dp);
+
+        int ans = max(incl, excl);
+        dp[curr][prev+1] = ans;
+        return dp[curr][prev+1];
+
+    }
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        // row from 0 to n-1 
+        // column from 0 & 1,   0 for width & 1 for height
+        int n = envelopes.size();
+        sort(envelopes.begin(), envelopes.end(), greater<vector<int>>());
+        vector<vector<int>> dp(n+1, vector<int>(n+1, -1));                              // for prev 0 to n
+        return solve(0, envelopes, n, -1, dp);
+
+        
+    }
+};
