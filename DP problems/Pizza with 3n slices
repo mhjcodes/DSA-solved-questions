@@ -1,0 +1,85 @@
+class Solution {
+public:
+    int solve(int i, int n, vector<int> &slices, int capacity, vector<vector<int>> &dp){
+        // base case
+        if(i > n || capacity == 0)
+        return 0;
+
+        if(dp[i][capacity] != -1)
+        return dp[i][capacity];
+        
+        int take = slices[i] + solve(i+2, n, slices, capacity-1, dp);
+        int notake = 0 + solve(i+1, n, slices, capacity, dp);
+
+        dp[i][capacity] =  max(take, notake);
+        return dp[i][capacity];
+    }
+    int solveTab(int start, int end, vector<int> &slices, vector<vector<int>> &dp){
+        int capacity = (slices.size())/3;
+        for(int i = end; i>=start ; i--){
+            for(int j=1; j<=capacity; j++ ){
+                int take = slices[i] + dp[i+2][j-1];
+                int notake = 0 + dp[i+1][j];
+
+                dp[i][j] =  max(take, notake);
+            }
+        }
+        return dp[start][capacity];
+    }
+    int solveOpt(int start, int end, vector<int> &slices, vector<int> &prev, vector<int> &curr, vector<int> &next){
+        
+        int capacity = (slices.size())/3;
+        for(int i = end; i>=start ; i--){
+            for(int j=1; j<=capacity; j++ ){
+                int take = slices[i] + next[j-1];
+                int notake = 0 + curr[j];
+
+                prev[j] =  max(take, notake);
+            }
+            // shift logic
+            next = curr;
+            curr = prev;
+        }
+        return curr[capacity];
+    }
+    int maxSizeSlices(vector<int>& slices) {
+        int k = slices.size();
+
+    /*  vector<vector<int>> dp1(k, vector<int> (k, -1));
+        int case1 = solve(0, k-2, slices, k/3, dp1);
+
+        vector<vector<int>> dp2(k, vector<int> (k, -1));
+        int case2 = solve(1, k-1, slices, k/3, dp2);
+
+        return max(case1, case2);
+    */
+
+        //tabulation
+    /*    vector<vector<int>> dp1(k+2, vector<int> (k+2, 0));
+        int case1 = solveTab(0, k-2, slices, dp1);
+
+        vector<vector<int>> dp2(k+2, vector<int> (k+2, 0));
+        int case2 = solveTab(1, k-1, slices, dp2);
+
+        return max(case1, case2);
+    */
+
+        //space optimisation
+        vector<int> prev1(k+2, 0);
+        vector<int> curr1(k+2, 0);
+        vector<int> next1(k+2, 0);
+        int case1 = solveOpt(0, k-2, slices, prev1, curr1, next1);
+
+        vector<int> prev2(k+2, 0);
+        vector<int> curr2(k+2, 0);
+        vector<int> next2(k+2, 0);
+        int case2 = solveOpt(1, k-1, slices, prev2, curr2, next2);
+
+        return max(case1, case2);
+
+
+
+        
+        
+    }
+};
