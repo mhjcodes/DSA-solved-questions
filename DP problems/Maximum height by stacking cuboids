@@ -1,0 +1,43 @@
+class Solution { // w,l,h
+public:
+    bool check(vector<int> &prev, vector<int> &curr){
+        return (curr[0] <= prev[0] && curr[1] <= prev[1] && curr[2] <= prev[2]);
+    }
+    int solve(int curr, vector<vector<int>> &cuboids, int n, int prev, vector<vector<int>> &dp){
+        // base case
+        if(curr == n)
+        return 0;
+
+        if(dp[curr][prev+1] != -1)
+        return dp[curr][prev+1];
+
+        int incl;
+        // for including
+        if( prev == -1 || check(cuboids[prev], cuboids[curr])){
+            incl = cuboids[curr][2] + solve(curr+1, cuboids, n, curr, dp);
+        }
+        else
+        incl = solve(curr+1, cuboids, n, prev, dp);
+
+        // for excluding
+        int excl = solve(curr+1, cuboids, n, prev, dp);
+
+        int ans = max(incl, excl);
+        dp[curr][prev+1] = ans;
+        return dp[curr][prev+1];
+
+    }
+    int maxHeight(vector<vector<int>>& cuboids) {
+        // step1: sort all dimensions of every cuboids (so, that we get max height at last index)
+        for(int i = 0; i < cuboids.size(); i++){
+            sort(cuboids[i].begin(),cuboids[i].end());
+        }
+        // step2: sort the cuboids array based on width
+        sort(cuboids.begin(), cuboids.end(), greater<vector<int>>());
+
+        // step3: treat every array as element, to solve this under LIS pattern
+        int n= cuboids.size();
+        vector<vector<int>> dp(n+1, vector<int>(n+1, -1));                              // for prev 0 to n
+        return solve(0, cuboids, n, -1, dp);
+    }
+};
