@@ -1,0 +1,70 @@
+class Solution {
+public:
+    int mod = 1000000007;
+    int solve(int index, int target, int n, int k, vector<vector<int>> &dp){
+        // base case
+        if(target < 0)
+        return 0;
+
+        if(index == n){
+            if(target == 0)
+            return 1;
+            else
+            return 0;
+        }
+        if(dp[index][target] != -1)
+        return dp[index][target];
+
+        int ways =0;
+        for(int j =1; j<=k; j++){
+            ways = (ways + solve(index+1, target-j, n, k, dp ))%mod;
+        }
+        dp[index][target] = ways;
+        return dp[index][target];
+    }
+    int solveOpt(int index, int target, int n, int k){
+        vector<int> next(target+1, 0);
+        vector<int> curr(target+1, 0);
+        // for i = n & target = 0, ways = 1 
+        next[0] = 1;
+        for(int index= n-1; index>=0; index--){
+            for(int capacity=1; capacity<=target ; capacity++){
+                int ways =0;
+                for(int i =1; i<=k; i++){
+                    if(capacity-i>=0)
+                    ways = (ways + next[capacity-i])%mod;
+                }
+                curr[capacity] = ways;
+            }
+            // shift logic
+            next = curr;
+        }
+        return next[target];
+    }
+    int solveTab(int index, int target, int n, int k, vector<vector<int>> &dp){
+        // for i = n & target = 0, ways = 1 
+        dp[n][0] = 1;
+        for(int index= n-1; index>=0; index--){
+            for(int capacity=1; capacity<=target ; capacity++){
+                int ways =0;
+                for(int i =1; i<=k; i++){
+                    if(capacity-i>=0)
+                    ways = (ways + dp[index+1][capacity-i])%mod;
+                }
+                dp[index][capacity] = ways;
+            }
+        }
+        return dp[0][target];
+    }
+
+    int numRollsToTarget(int n, int k, int target) {
+        //vector<vector<int>> dp(n+1, vector<int>(target+1, -1));
+        //return solve(0, target, n, k, dp);
+        
+        //vector<vector<int>> dp(n+1, vector<int>(target+1, 0));
+        //return solveTab(0, target, n, k, dp);
+
+        return solveOpt(0, target, n, k);
+        
+    }
+};
