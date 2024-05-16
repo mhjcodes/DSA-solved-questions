@@ -1,0 +1,29 @@
+#include<bits/stdc++.h>
+vector<int> solve(vector<int> &ans, vector<vector<int>> &adj, int n, unordered_map<int, bool> &visited){
+    queue<int> q;
+    q.push(0);
+    visited[0] = 1;
+    while(!q.empty()){
+            int frontNode = q.front();
+            q.pop(); 
+            // store ans from frontNode
+            ans.push_back(frontNode);
+
+            if(!adj[frontNode].empty()){
+                for(auto k: adj[frontNode]){
+                    if(visited[k] != 1)
+                    q.push(k);
+                    visited[k] = 1;
+                }
+            }
+        }
+        return ans;
+    }
+vector<int> bfsTraversal(int n, vector<vector<int>> &adj){  // note : the adj list is a sort (ordered map: key values are sorted) & instead of list, set is used to sort all elements
+    // here we are given adj list of every vertex already. i.e, graph is already created
+    vector<int> ans;
+    unordered_map<int, bool> visited;
+    // node value & index are same.
+    // we will always start with pehla node 0 
+    return solve(ans, adj, n, visited);
+}
