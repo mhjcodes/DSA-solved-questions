@@ -27,3 +27,4 @@ vector<int> bfsTraversal(int n, vector<vector<int>> &adj){  // note : the adj li
     // we will always start with pehla node 0 
     return solve(ans, adj, n, visited);
 }
+// we can avoid using visited data also if it is a directed acyclic graph, but its always good practice to use visited
