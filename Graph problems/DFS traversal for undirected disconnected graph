@@ -3,9 +3,9 @@ void solve(unordered_map<int, set<int>> &adj, vector<int> &component, unordered_
     component.push_back(i);
     visited[i] = 1;
     
-    for(auto j : adj[i]){
-        if(!adj[j].empty()){
-            if(!visited[j]){
+    if(!adj[i].empty()){
+        for(auto j : adj[i]){
+            if (!visited[j]){
                 solve(adj, component, visited, j);
             }
         }
