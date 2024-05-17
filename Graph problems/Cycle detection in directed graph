@@ -1,0 +1,42 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+bool dfssolve(int node, unordered_map<int, set<int>> &adj, unordered_map<int, bool> &visited, vector<int> &dfstracker) {
+    visited[node] = true;
+    dfstracker[node] = true;
+
+    for (auto neighbour : adj[node]) {
+        if (!visited[neighbour]) {
+            if (dfssolve(neighbour, adj, visited, dfstracker)) {
+                return true;
+            }
+        } else if (dfstracker[neighbour]) {
+            return true;
+        }
+    }
+
+    dfstracker[node] = false;
+    return false;
+}
+
+int detectCycleInDirectedGraph(int n, vector<pair<int, int>> &edges) {
+    unordered_map<int, bool> visited;
+    unordered_map<int, set<int>> adj;
+    vector<int> dfstracker(n + 1, 0);
+
+    // Build adjacency list
+    for (int i = 0; i < edges.size(); i++) {
+        int u = edges[i].first;
+        int v = edges[i].second;
+        adj[u].insert(v);
+    }
+
+    for (int i = 1; i <= n; i++) {
+        if (!visited[i]) {
+            if (dfssolve(i, adj, visited, dfstracker)) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
