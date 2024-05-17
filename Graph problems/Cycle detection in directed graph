@@ -7,14 +7,15 @@ bool dfssolve(int node, unordered_map<int, set<int>> &adj, unordered_map<int, bo
 
     for (auto neighbour : adj[node]) {
         if (!visited[neighbour]) {
-            if (dfssolve(neighbour, adj, visited, dfstracker)) {
+            bool cycleDetect = dfssolve(neighbour, adj, visited, dfstracker);
+            if (cycleDetect) {
                 return true;
             }
-        } else if (dfstracker[neighbour]) {
+        } 
+        else if (dfstracker[neighbour]) {
             return true;
         }
     }
-
     dfstracker[node] = false;
     return false;
 }
@@ -33,9 +34,9 @@ int detectCycleInDirectedGraph(int n, vector<pair<int, int>> &edges) {
 
     for (int i = 1; i <= n; i++) {
         if (!visited[i]) {
-            if (dfssolve(i, adj, visited, dfstracker)) {
-                return true;
-            }
+            bool ans = dfssolve(i, adj, visited, dfstracker);
+            if (ans) 
+            return true;
         }
     }
     return false;
