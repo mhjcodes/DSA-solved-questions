@@ -1,0 +1,44 @@
+#include <bits/stdc++.h> 
+using namespace std;
+
+vector<int> topologicalSort(vector<vector<int>> &edges, int v, int e) {
+    vector<vector<int>> adj(v);  // Initialize adjacency list with 'v' empty vectors
+    vector<int> ans;
+    vector<int> indegree(v, 0);
+    queue<int> q;
+
+    // Build adjacency list
+    for (int i = 0; i < e; i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        adj[u].push_back(v);
+    }
+
+    // Build indegree of every node
+    for(int j = 0; j < v; j++) {
+        for(auto k : adj[j]) {
+            indegree[k]++;
+        }
+    }
+
+    // Push all nodes with zero indegree into the queue
+    for (int i = 0; i < v; i++) {
+        if (indegree[i] == 0) {
+            q.push(i);
+        }
+    }
+
+    // Kahn's Algorithm to process nodes
+    while(!q.empty()) {
+        int frontNode = q.front();
+        q.pop();
+        ans.push_back(frontNode);
+        for(auto neighbour : adj[frontNode]) {
+            indegree[neighbour]--;
+            if (indegree[neighbour] == 0) {
+              q.push(neighbour);
+            }
+        }
+    }
+    return ans;
+}
