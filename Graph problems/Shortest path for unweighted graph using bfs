@@ -1,0 +1,44 @@
+#include<bits/stdc++.h>
+using namespace std;
+vector<int> solve(int src, int dest, unordered_map<int, set<int>> &adj, vector<int> &parent, vector<int> &visited){
+    queue<int> q;
+    q.push(src);
+    visited[src] = true;
+    parent[src] = -1;
+    while(!q.empty()) {
+        int frontNode = q.front();
+        q.pop();
+        for(auto neighbour : adj[frontNode]) {
+            if(!visited[neighbour]) {
+              q.push(neighbour);
+			  visited[neighbour] = 1;
+			  parent[neighbour] = frontNode;
+            }
+        }
+    }
+    // finding shortest route
+	vector<int> ans;
+	int track = dest;
+	ans.push_back(track);
+	while(track != src){
+		track = parent[track];
+		ans.push_back(track);
+	}
+	reverse(ans.begin(), ans.end());
+	return ans;
+}
+vector<int> shortestPath( vector<pair<int,int>> edges , int n , int m, int s , int t){
+	
+	vector<int> parent(n+1);
+	unordered_map<int, set<int>> adj;
+	vector<int> visited(n+1, 0);
+
+    // Build adjacency list
+    for (int i = 0; i < edges.size(); i++) {
+        int u = edges[i].first;
+        int v = edges[i].second;
+        adj[u].insert(v);
+		adj[v].insert(u);
+    }
+	return solve(s, t, adj, parent, visited);
+}
