@@ -1,0 +1,61 @@
+#include <bits/stdc++.h> 
+using namespace std;
+
+void topodfssolve(int node, unordered_map<int, vector<pair<int, int>>> &adj, unordered_map<int, bool> &visited, stack<int> &stack) {
+    visited[node] = true;
+    for(auto neighbour : adj[node]) {
+        if (!visited[neighbour.first]) {
+            topodfssolve(neighbour.first, adj, visited, stack);
+        }
+    }
+    stack.push(node);
+}
+
+vector<int> shortestPathInDAG(int n, int m, vector<vector<int>> &edges) {
+    // Step 1: Do topological sort to ensure every node parent comes before its respective nodes (vital step)
+    unordered_map<int, bool> visited;
+    unordered_map<int, vector<pair<int, int>>> adj;
+    vector<int> ans(n, INT_MAX);
+    stack<int> stack;
+
+    // Build adjacency list
+    for (int i = 0; i < edges.size(); i++) {
+        int u = edges[i][0];
+        int v = edges[i][1];
+        int w = edges[i][2];
+        adj[u].push_back({v, w});
+    }
+
+    // Perform topological sort
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            topodfssolve(i, adj, visited, stack);
+        }
+    }
+
+    // Step 2: Initialize the source node distance to 0
+    int src = 0;  // Assuming source node is 0
+    ans[src] = 0;
+
+    // Step 3: Process nodes in topological order
+    while (!stack.empty()) {
+        int top = stack.top();
+        stack.pop();
+        if (ans[top] != INT_MAX) {  // Ensure the node has been reached
+            for (auto neighbour : adj[top]) {
+                if (ans[top] + neighbour.second < ans[neighbour.first]) {
+                    ans[neighbour.first] = ans[top] + neighbour.second;
+                }
+            }
+        }
+    }
+
+    // Replace INT_MAX with -1 to indicate unreachable nodes
+    for (int i = 0; i < n; i++) {
+        if (ans[i] == INT_MAX) {
+            ans[i] = -1;
+        }
+    }
+
+    return ans;
+}
